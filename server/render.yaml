@@ -1,0 +1,38 @@
+# Render Blueprint for PresenSense Backend
+# This file defines the infrastructure needed to deploy the application
+
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: presensense-db
+    env: docker
+    plan: free  # Free tier PostgreSQL (expires after 90 days, then need paid plan)
+    region: singapore
+    databases:
+      - name: presensense
+        databaseName: presensense_db
+        user: presensense_user
+    
+  # Web Service (FastAPI Backend)
+  - type: web
+    name: presensense-backend
+    env: python
+    region: singapore
+    plan: free  # Free tier: 512MB RAM, shared CPU
+    buildCommand: pip install -r requirements.txt && python render_setup.py
+    startCommand: python main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: presensense-db
+          property: connectionString
+      - key: PYTHONUNBUFFERED
+        value: 1
+      - key: MATCH_THRESHOLD
+        value: 0.6
+      - key: ATTENDANCE_DEDUP_SECONDS
+        value: 300
+    healthCheckPath: /health
+    autoDeploy: true
