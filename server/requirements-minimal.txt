@@ -1,0 +1,51 @@
+# PresenSense - Minimal Working Requirements for Render
+# This file contains only the essential packages with compatible versions
+# Last tested: November 2025
+
+# ===== WEB FRAMEWORK =====
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+python-multipart==0.0.20
+
+# ===== DATABASE =====
+SQLAlchemy==2.0.43
+psycopg2-binary==2.9.10
+
+# ===== AI/ML CORE DEPENDENCIES =====
+# IMPORTANT: Order matters! Install these first
+
+# NumPy MUST be <2.0 for MediaPipe compatibility
+numpy==1.26.4
+
+# Protobuf MUST be <5.0 for MediaPipe compatibility
+protobuf==4.25.5
+
+# OpenCV - use headless version for server deployment (smaller, no GUI dependencies)
+opencv-python-headless==4.10.0.84
+
+# Pillow for image processing
+Pillow==10.4.0
+
+# ===== AI/ML FRAMEWORKS =====
+# TensorFlow and Keras - Use 2.17.x for best compatibility
+tensorflow==2.17.1
+tf-keras==2.17.0
+
+# MediaPipe - For face mesh and emotion detection
+mediapipe==0.10.18
+
+# DeepFace - For face recognition
+deepface==0.0.95
+
+# ===== DATA PROCESSING =====
+pandas==2.2.2
+
+# ===== CLOUD STORAGE (Optional) =====
+# google-cloud-storage==2.18.2
+
+# ===== UTILITIES =====
+requests==2.32.5
+tqdm==4.67.1
+
+# ===== PRODUCTION SERVER =====
+gunicorn==23.0.0
