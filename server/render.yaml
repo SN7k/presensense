@@ -19,7 +19,7 @@ services:
     env: python
     region: singapore
     plan: free  # Free tier: 512MB RAM, shared CPU
-    buildCommand: pip install -r requirements.txt && python render_setup.py
+    buildCommand: pip install -r requirements-render.txt && python render_setup.py
     startCommand: python main.py
     envVars:
       - key: PYTHON_VERSION
