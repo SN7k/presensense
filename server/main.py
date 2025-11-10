@@ -171,14 +171,34 @@ async def admin_ui():
 		const ctx = canvas.getContext('2d');
 		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 		canvas.toBlob(async (blob) => {
-			const fd = new FormData();
-			fd.append('name', name);
-			fd.append('file', blob, 'capture.jpg');
-			statusEl.textContent = 'Uploading...';
-			const res = await fetch('/admin/upload', { method: 'POST', body: fd });
-			if (!res.ok) { statusEl.textContent = 'Upload failed: ' + res.status; return; }
-			const data = await res.json();
-			statusEl.textContent = 'Uploaded. User ID: ' + data.user_id;
+			try {
+				const fd = new FormData();
+				fd.append('name', name);
+				fd.append('file', blob, 'capture.jpg');
+				statusEl.textContent = 'Uploading...';
+				statusEl.style.color = 'blue';
+				
+				const res = await fetch('/admin/upload', { method: 'POST', body: fd });
+				
+				if (!res.ok) {
+					const errorText = await res.text();
+					statusEl.textContent = 'Upload failed: ' + res.status + ' - ' + errorText;
+					statusEl.style.color = 'red';
+					return;
+				}
+				
+				const data = await res.json();
+				statusEl.textContent = '✅ Success! User ID: ' + data.user_id + ' - ' + data.message;
+				statusEl.style.color = 'green';
+				
+				// Clear the name field
+				document.getElementById('cam-name').value = '';
+				
+			} catch (error) {
+				statusEl.textContent = '❌ Error: ' + error.message;
+				statusEl.style.color = 'red';
+				console.error('Upload error:', error);
+			}
 		});
 	};
 	</script>
@@ -222,15 +242,26 @@ async def verify_ui():
 		const ctx = c2.getContext('2d');
 		ctx.drawImage(v2, 0, 0, c2.width, c2.height);
 		c2.toBlob(async (blob) => {
-			const fd = new FormData();
-			fd.append('file', blob, 'verify.jpg');
-			m2.textContent = 'Verifying...';
-			const res = await fetch('/match/', { method: 'POST', body: fd });
-			const data = await res.json();
-			if (res.ok) {
-				m2.textContent = 'Matched user ID: ' + data.user_id;
-			} else {
-				m2.textContent = data.detail || 'No match';
+			try {
+				const fd = new FormData();
+				fd.append('file', blob, 'verify.jpg');
+				m2.textContent = 'Verifying...';
+				m2.style.color = 'blue';
+				
+				const res = await fetch('/match/', { method: 'POST', body: fd });
+				const data = await res.json();
+				
+				if (res.ok) {
+					m2.textContent = '✅ Matched! User: ' + data.user_name + ' (ID: ' + data.user_id + ')';
+					m2.style.color = 'green';
+				} else {
+					m2.textContent = '❌ ' + (data.detail || 'No match found');
+					m2.style.color = 'red';
+				}
+			} catch (error) {
+				m2.textContent = '❌ Error: ' + error.message;
+				m2.style.color = 'red';
+				console.error('Verification error:', error);
 			}
 		});
 	};
