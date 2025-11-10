@@ -29,21 +29,21 @@ RUN mkdir -p /app/uploads
 
 # Env
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8000
+ENV PORT=7860
 ENV PYTHONPATH=/app
 
-# Expose port
-EXPOSE 8000
+# Expose port (Hugging Face Spaces uses 7860)
+EXPOSE 7860
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/health || exit 1
+  CMD curl -f http://localhost:${PORT}/health || exit 1
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
-echo "Starting Face Recognition Attendance System..."\n\
+echo "Starting Face Recognition Attendance System on port ${PORT}..."\n\
 sleep 2\n\
-exec uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1\n\
+exec uvicorn main:app --host 0.0.0.0 --port ${PORT} --workers 1\n\
 ' > /app/start.sh && chmod +x /app/start.sh
 
 # Use startup script

@@ -1,6 +1,6 @@
 // API Configuration using environment variables
-// For production: Set VITE_API_BASE_URL in environment variables
-// For local development: create .env.local file
+// For production: Set VITE_API_BASE_URL in .env.production
+// For local development: Set VITE_API_BASE_URL in .env.local
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
